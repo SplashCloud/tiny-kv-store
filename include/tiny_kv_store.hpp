@@ -1,3 +1,4 @@
+#include <optional>
 #include <unordered_map>
 
 
@@ -21,10 +22,18 @@ class TinyKVStore {
     auto operator=(TinyKVStore &kv_store) -> TinyKVStore & = delete; // no copy assignment operator
     
     // common api
-    auto Get(Key key) -> Value;
-    void Set(Key key, Value value);
+    auto Get(Key key) -> std::optional<Value>; // using the std::optinal to unified manage 'value' and 'no value'
+    auto Set(Key key, Value&& value) -> bool;
+    auto Delete(Key key) -> bool;
+
     inline auto Size() -> size_t {
         return this->_map.size();
+    }
+
+  protected:
+
+    inline auto In(Key key) -> bool {
+        return this->_map.find(key) != this->_map.end();
     }
 
   private:
